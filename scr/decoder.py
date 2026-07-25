@@ -1,5 +1,7 @@
 import torch
 import torch.nn as nn
+from scr.attention import MultiHeadAttention
+from scr.feed_forward import FeedForward
 
 class TransformerDecoderLayer(nn.Module):
   def __init__(self, embedding_dim, num_head, expansion=4, dropout=0.1):
