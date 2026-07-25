@@ -66,3 +66,71 @@ class Transformer(nn.Module):
     output = self.fc_out(decoder_output)
 
     return output
+
+ def generate(
+        self,
+        src,
+        max_length=20
+    ):
+
+
+        self.eval()
+
+
+        with torch.no_grad():
+
+
+            encoder_output = self.encoder(src)
+
+
+            generated = torch.tensor(
+                [[START_TOKEN]],
+                device=src.device
+            )
+
+
+
+            for _ in range(max_length):
+
+
+                decoder_output = self.decoder(
+                    generated,
+                    encoder_output
+                )
+
+
+
+                logits = self.output_layer(
+                    decoder_output
+                )
+
+
+
+                next_token_logits = logits[:, -1, :]
+
+
+                next_token = torch.argmax(
+                    next_token_logits,
+                    dim=-1,
+                    keepdim=True
+                )
+
+
+
+
+                generated = torch.cat(
+                    [
+                        generated,
+                        next_token
+                    ],
+                    dim=1
+                )
+
+
+
+                if next_token.item() == END_TOKEN:
+                    break
+
+
+
+            return generated
