@@ -35,6 +35,21 @@ device = torch.device(
     else "cpu"
 )
 
+# =========================
+# Dataset
+# =========================
+
+dataset = ToyTranslationDataset(
+    num_samples=100
+)
+
+
+dataloader = DataLoader(
+    dataset,
+    batch_size=batch_size,
+    shuffle=True
+)
+
 
 # =========================
 # Model
@@ -52,36 +67,6 @@ model = Transformer(
 
 model = model.to(device)
 
-
-# =========================
-# Toy Dataset
-# =========================
-
-# Encoder input
-src = torch.randint(
-    0,
-    src_vocab_size,
-    (batch_size, src_len)
-)
-
-
-# Target sentence
-target = torch.randint(
-    0,
-    tgt_vocab_size,
-    (batch_size, tgt_len)
-)
-
-
-src = src.to(device)
-target = target.to(device)
-
-
-# Decoder input
-decoder_input = target[:, :-1]
-
-
-target_output = target[:, 1:]
 
 
 # =========================
@@ -105,31 +90,81 @@ model.train()
 
 for epoch in range(epochs):
 
-    optimizer.zero_grad()
+    total_loss = 0
 
 
-    output = model(
-        src,
-        decoder_input
-    )
+    for batch in dataloader:
 
 
-    # output:
-    # (batch, seq_len, vocab_size)
+        # -------------------------
+        # Get data
+        # -------------------------
 
-    loss = criterion(
-        output.reshape(-1, tgt_vocab_size),
-        target_output.reshape(-1)
-    )
+        src = batch["src"].to(device)
 
-
-    loss.backward()
+        tgt = batch["tgt"].to(device)
 
 
-    optimizer.step()
+
+        # -------------------------
+        # Decoder shifting
+        # -------------------------
+
+        decoder_input = tgt[:, :-1]
+
+        target_output = tgt[:, 1:]
+
+
+
+        # -------------------------
+        # Forward
+        # -------------------------
+
+        output = model(
+            src,
+            decoder_input
+        )
+
+
+        # output:
+        # (batch, seq_len, vocab_size)
+
+
+
+        # -------------------------
+        # Loss
+        # -------------------------
+
+        loss = criterion(
+            output.reshape(-1, tgt_vocab_size),
+            target_output.reshape(-1)
+        )
+
+
+
+        # -------------------------
+        # Backprop
+        # -------------------------
+
+        optimizer.zero_grad()
+
+
+        loss.backward()
+
+
+        optimizer.step()
+
+
+
+        total_loss += loss.item()
+
+
+
+    avg_loss = total_loss / len(dataloader)
 
 
     if epoch % 20 == 0:
+
         print(
-            f"Epoch {epoch} | Loss: {loss.item():.4f}"
+            f"Epoch {epoch} | Loss: {avg_loss:.4f}"
         )
