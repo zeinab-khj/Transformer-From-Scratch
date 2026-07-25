@@ -20,11 +20,9 @@ num_decoder_layers = 2
 
 batch_size = 4
 
-src_len = 5
-tgt_len = 6
 
 epochs = 200
-
+learning_rate = 0.001
 
 # =========================
 # Device
@@ -77,7 +75,7 @@ criterion = nn.CrossEntropyLoss()
 
 optimizer = Adam(
     model.parameters(),
-    lr=0.001
+    lr=learning_rate
 )
 
 
