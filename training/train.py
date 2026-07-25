@@ -3,6 +3,7 @@ import torch.nn as nn
 from torch.optim import Adam
 
 from src.transformer import Transformer
+from scr.mask import generate_causal_mask
 
 
 # =========================
@@ -111,6 +112,9 @@ for epoch in range(epochs):
         decoder_input = tgt[:, :-1]
 
         target_output = tgt[:, 1:]
+        
+        tgt_len = decoder_input.size(1)
+        tgt_mask = generate_causal_mask(tgt_len)
 
 
 
@@ -120,7 +124,8 @@ for epoch in range(epochs):
 
         output = model(
             src,
-            decoder_input
+            decoder_input,
+            tgt_mask
         )
 
 
