@@ -3,6 +3,7 @@ import torch.nn as nn
 from scr.positional_encoding import PositionalEncoding
 from scr.encoder import TransformerEncoder
 from scr.decoder import TransformerDecoder
+from src.mask import generate_causal_mask
 
 class Transformer(nn.Module):
   def __init__(
@@ -53,7 +54,12 @@ class Transformer(nn.Module):
 
     encoder_output = self.encoder(scr_pos_embedding)
 
-    # Decoder input
+    ## creat decoder mask
+    tgt_length = tgt.size(1)
+    tgt_mask = generate_causal_mask(tgt_length).to(tgt.device)
+
+    
+    ## Decoder 
     tgt_embedding = self.tgt_embedding(tgt)
     tgt_pos_encoding = self.tgt_pos_encoding(tgt_embedding)
 
