@@ -1,5 +1,7 @@
 import torch
 import torch.nn as nn
+from scr.attention import MultiHeadAttention
+from scr.feed_forward import FeedForward
 
 class TransformerEncoderLayer(nn.Module):
   def __init__(self, embedding_dim, num_head, expansion=4, dropout=0.1):
@@ -7,7 +9,7 @@ class TransformerEncoderLayer(nn.Module):
     self.emdebbing_dim = embedding_dim
     self.num_head = num_head
 
-    self.attention = Multi_Head_Attention(embedding_dim, num_head)
+    self.attention = MultiHeadAttention(embedding_dim, num_head)
     self.norm1 = nn.LayerNorm(embedding_dim)
     self.ff = FeedForward(embedding_dim, expansion)
     self.norm2 = nn.LayerNorm(embedding_dim)
