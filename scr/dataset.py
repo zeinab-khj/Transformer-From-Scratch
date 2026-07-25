@@ -1,6 +1,10 @@
 import torch
 from torch.utils.data import Dataset
 
+# Special Tokens
+PAD_TOKEN = 0
+START_TOKEN = 1
+END_TOKEN = 2
 
 class ToyTranslationDataset(Dataset):
 
@@ -18,7 +22,7 @@ class ToyTranslationDataset(Dataset):
 
 
             tgt = torch.tensor(
-                [5, 6, 7, 8],
+                [START_TOKEN, 5, 6, 7, 8و END_TOKEN],
                 dtype=torch.long
             )
 
