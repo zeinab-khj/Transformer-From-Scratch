@@ -5,6 +5,7 @@ from scr.encoder import TransformerEncoder
 from scr.decoder import TransformerDecoder
 
 
+
 class Transformer(nn.Module):
   def __init__(
       self,
