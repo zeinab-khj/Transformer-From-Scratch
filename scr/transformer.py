@@ -1,5 +1,8 @@
 import torch
 import torch.nn as nn
+from scr.positional_encoding import PositionalEncoding
+from scr.encoder import TransformerEncoder
+from scr.decoder import TransformerDecoder
 
 class Transformer(nn.Module):
   def __init__(
